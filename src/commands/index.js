@@ -524,29 +524,52 @@ commands.banner = {
 
 // ─── neofetch ───
 commands.neofetch = {
-  desc: "Display system info",
+  desc: "Display system info (--portfolio for real stats)",
   fn: (args, ctx) => {
-    const info = [
+    const isPortfolio = args.includes('--portfolio');
+    const now = new Date();
+    const uptime = Math.floor((Date.now() - ctx.startTime) / 1000);
+    const h = Math.floor(uptime / 3600);
+    const m = Math.floor((uptime % 3600) / 60);
+
+    const stats = isPortfolio ? [
+      `<span style="color:var(--accent-yellow);font-weight:700">${PORTFOLIO.name}</span>`,
+      `<span style="color:var(--text-muted)">------------------</span>`,
+      `<span class="info-label">Title:</span>     ${PORTFOLIO.title}`,
+      `<span class="info-label">Projects:</span>  ${PORTFOLIO.projects.length} completed`,
+      `<span class="info-label">Skills:</span>    ${Object.keys(PORTFOLIO.skills).length} categories`,
+      `<span class="info-label">Exp:</span>       ${PORTFOLIO.experience[0].duration}`,
+      `<span class="info-label">Location:</span>  ${PORTFOLIO.location}`,
+      `<span class="info-label">Email:</span>     ${PORTFOLIO.email}`,
+      `<span class="info-label">Status:</span>    Available for Hire`,
+    ] : [
       `<span style="color:var(--accent-green);font-weight:700">krish</span><span style="color:var(--text-muted)">@</span><span style="color:var(--accent-blue);font-weight:700">portfolio</span>`,
-      `<span style="color:var(--text-muted)">──────────────────</span>`,
-      `<span class="info-label">OS:</span>     KrishOS v2.0`,
-      `<span class="info-label">Host:</span>   Portfolio System`,
-      `<span class="info-label">Kernel:</span> Creative-6.4.2`,
-      `<span class="info-label">Shell:</span>  krish-sh 5.2`,
-      `<span class="info-label">Theme:</span>  ${ctx.currentTheme}`,
-      `<span class="info-label">Term:</span>   portfolio-term`,
-      `<span class="info-label">CPU:</span>    Creative-Core i9`,
-      `<span class="info-label">GPU:</span>    RTX 5090 Neural`,
-      `<span class="info-label">Memory:</span> 42% used`,
-      '',
-      ['#1a1b26','#f7768e','#9ece6a','#e0af68','#7aa2f7','#bb9af7','#7dcfff','#c0caf5']
-        .map(c => `<span style="background:${c};width:14px;height:14px;display:inline-block;border-radius:2px"></span>`).join(' ')
+      `<span style="color:var(--text-muted)">------------------</span>`,
+      `<span class="info-label">OS:</span>       KrishOS v2.0 (React 18)`,
+      `<span class="info-label">Host:</span>     Terminal Portfolio v2.0`,
+      `<span class="info-label">Kernel:</span>   Creative-6.4.2-ANTIGRAVITY`,
+      `<span class="info-label">Uptime:</span>   ${h ? h + 'h ' : ''}${m}m`,
+      `<span class="info-label">Shell:</span>    krish-sh 5.2`,
+      `<span class="info-label">Theme:</span>    ${ctx.currentTheme}`,
+      `<span class="info-label">CPU:</span>      Your Brain (Unlimited)`,
+      `<span class="info-label">Memory:</span>   Ambition 64GB / Passion 128GB`,
+      `<span class="info-label">GPU:</span>      RTX 5090 Neural (Virtual)`,
     ];
 
-    ctx.appendHtml(`<div style="display:flex;gap:20px;font-size:0.8rem;line-height:1.6">
-      <pre style="color:var(--accent-cyan);text-shadow:var(--glow-cyan);font-size:0.5rem;line-height:1.15;font-family:var(--font-mono)">${SIDEBAR_ASCII}</pre>
-      <div>${info.join('<br>')}</div>
+    const colors = ['#1a1b26','#f7768e','#9ece6a','#e0af68','#7aa2f7','#bb9af7','#7dcfff','#c0caf5']
+      .map(c => `<span style="background:${c};width:16px;height:16px;display:inline-block;border-radius:2px;border:1px solid rgba(255,255,255,0.1)"></span>`).join(' ');
+
+    ctx.appendHtml(`<div style="display:flex;gap:30px;font-size:0.85rem;line-height:1.6;margin:10px 0;align-items:flex-start">
+      <pre style="color:var(--accent-blue);text-shadow:var(--glow-cyan);font-size:0.6rem;line-height:1.2;font-family:var(--font-mono);margin:0">${SIDEBAR_ASCII}</pre>
+      <div>
+        ${stats.join('<br>')}
+        <div style="margin-top:12px">${colors}</div>
+      </div>
     </div>`);
+    
+    if (!isPortfolio) {
+      ctx.appendHtml(`<div style="color:var(--text-muted);font-size:0.7rem;margin-top:4px">💡 Try: neofetch --portfolio</div>`);
+    }
   }
 };
 
@@ -765,26 +788,76 @@ commands.exit = {
   }
 };
 
-// ─── share ───
-commands.share = {
-  desc: "Share a command as URL",
+// ─── warp ───
+commands.warp = {
+  desc: "Engage warp drive! (screensaver easter egg)",
   fn: (args, ctx) => {
-    const cmd = args.trim();
-    if (!cmd) {
-      ctx.appendHtml('<span class="output-error">Usage: share &lt;command&gt;</span>');
-      ctx.appendHtml('<span class="output-info">Example: share projects --filter react</span>');
+    const factor = parseInt(args) || 10;
+    ctx.appendHtml(`<span style="color:var(--accent-yellow);font-weight:700">🚀 Engaging warp drive (factor ${factor})...</span>`);
+    window.dispatchEvent(new CustomEvent('starfield-warp', { detail: { factor } }));
+    
+    // Auto-reset after some time
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('starfield-warp', { detail: { factor: 1 } }));
+    }, 10000);
+  }
+};
+
+// ─── art ───
+commands.art = {
+  desc: "Generate AI ASCII art (art <prompt>)",
+  fn: async (args, ctx) => {
+    const prompt = args.trim();
+    if (!prompt) {
+      ctx.appendHtml('<span class="output-error">Usage: art &lt;prompt&gt;</span>');
       return;
     }
-    const url = `${window.location.origin}${window.location.pathname}?cmd=${encodeURIComponent(cmd)}`;
-    ctx.appendHtml(`<div style="padding:8px 12px;background:var(--bg-tertiary);border-radius:6px;border:1px solid var(--border-color);margin:4px 0">
-      <div style="color:var(--accent-green);font-size:0.8rem">🔗 Shareable URL:</div>
-      <div style="color:var(--accent-cyan);font-size:0.78rem;word-break:break-all;margin-top:4px"><a href="${url}" style="color:var(--accent-cyan)">${url}</a></div>
-    </div>`);
 
-    // Copy to clipboard
-    navigator.clipboard?.writeText(url).then(() => {
-      ctx.appendHtml('<span class="output-success">✓ Copied to clipboard!</span>');
-    }).catch(() => {});
+    ctx.appendHtml(`<span class="output-info">🎨 Dreaming up "${prompt}"...</span>`);
+    
+    try {
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=64&height=64&nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
+      
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.src = imageUrl;
+      
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      const gctx = canvas.getContext('2d');
+      const width = 60;
+      const height = 30;
+      canvas.width = width;
+      canvas.height = height;
+      gctx.drawImage(img, 0, 0, width, height);
+      
+      const imageData = gctx.getImageData(0, 0, width, height).data;
+      const chars = " .:-=+*#%@";
+      let ascii = "";
+      
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const offset = (y * width + x) * 4;
+          const r = imageData[offset];
+          const g = imageData[offset + 1];
+          const b = imageData[offset + 2];
+          const avg = (r + g + b) / 3;
+          const char = chars[Math.floor((avg / 255) * (chars.length - 1))];
+          // Use colored spans for extra sexiness
+          ascii += `<span style="color:rgb(${r},${g},${b})">${char}</span>`;
+        }
+        ascii += "\n";
+      }
+
+      ctx.appendHtml(`<pre style="font-size:0.45rem;line-height:1;font-family:var(--font-mono);background:#000;padding:10px;border-radius:4px;border:1px solid var(--border-color);margin:10px 0">${ascii}</pre>`);
+      ctx.appendHtml(`<span class="output-success">✓ Art generated successfully.</span>`);
+    } catch (err) {
+      ctx.appendHtml(`<span class="output-error">Error dreaming: ${err.message}</span>`);
+    }
   }
 };
 
