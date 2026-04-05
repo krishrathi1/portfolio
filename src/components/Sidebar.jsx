@@ -167,42 +167,13 @@ function InfoLine({ label, value }) {
 }
 
 function ProjectPreview({ label, url, desc }) {
-  const [blocked, setBlocked] = useState(false);
-
   return (
-    <div className="proj-preview">
-      <div className="proj-preview-header">
-        <span className="proj-preview-dot" />
-        <span className="proj-preview-label">{label}</span>
-        <span className="proj-preview-desc">{desc}</span>
-        <a href={url} target="_blank" rel="noopener" className="proj-preview-open" title="Open">↗</a>
-      </div>
-      {blocked ? (
-        <a href={url} target="_blank" rel="noopener" className="proj-preview-fallback">
-          <span>⟨ Click to open {label} ↗ ⟩</span>
-        </a>
-      ) : (
-        <div className="proj-preview-frame-wrap">
-          <iframe
-            src={url}
-            title={label}
-            className="proj-preview-iframe"
-            sandbox="allow-scripts allow-same-origin allow-forms"
-            onError={() => setBlocked(true)}
-            onLoad={(e) => {
-              try {
-                // detect blank / X-Frame-Options block
-                const doc = e.target.contentDocument;
-                if (!doc || doc.body?.innerHTML === '') setBlocked(true);
-              } catch {
-                setBlocked(true);
-              }
-            }}
-          />
-          <a href={url} target="_blank" rel="noopener" className="proj-preview-click-shield" />
-        </div>
-      )}
-    </div>
+    <a href={url} target="_blank" rel="noopener" className="proj-link">
+      <span className="proj-link-dot" />
+      <span className="proj-link-name">{label}</span>
+      <span className="proj-link-desc">{desc}</span>
+      <span className="proj-link-arrow">↗</span>
+    </a>
   );
 }
 

@@ -138,96 +138,48 @@
   text-align: right;
 }
 
-/* ─── Project Previews ─── */
-.proj-preview {
-  margin-bottom: 10px;
-  border: 1px dashed var(--border-color);
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.proj-preview:hover { border-color: var(--accent-cyan); }
-
-.proj-preview-header {
+/* ─── Project Links ─── */
+.proj-link {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 7px;
-  background: var(--bg-secondary);
-  font-size: 0.65rem;
+  gap: 6px;
+  padding: 6px 2px;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--border-color);
+  transition: opacity 0.15s;
 }
+.proj-link:last-child { border-bottom: none; }
+.proj-link:hover { opacity: 0.75; }
 
-.proj-preview-dot {
-  width: 6px;
-  height: 6px;
+.proj-link-dot {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--accent-green);
   flex-shrink: 0;
-  box-shadow: 0 0 5px var(--accent-green);
 }
 
-.proj-preview-label {
+.proj-link-name {
   color: var(--accent-yellow);
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.proj-preview-desc {
+.proj-link-desc {
   color: var(--text-muted);
+  font-size: 0.62rem;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.proj-preview-open {
-  color: var(--accent-cyan);
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.75rem;
+.proj-link-arrow {
+  color: var(--text-muted);
+  font-size: 0.65rem;
   flex-shrink: 0;
-  opacity: 0.7;
-  transition: opacity 0.15s;
 }
-.proj-preview-open:hover { opacity: 1; }
-
-.proj-preview-frame-wrap {
-  position: relative;
-  width: 100%;
-  height: 110px;
-  overflow: hidden;
-  background: #000;
-}
-
-.proj-preview-iframe {
-  width: 300%;
-  height: 300%;
-  transform: scale(0.333);
-  transform-origin: top left;
-  border: none;
-  pointer-events: none;
-}
-
-/* transparent click shield — opens the real site on click */
-.proj-preview-click-shield {
-  position: absolute;
-  inset: 0;
-  cursor: pointer;
-  z-index: 2;
-}
-
-.proj-preview-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
-  color: var(--accent-cyan);
-  font-size: 0.72rem;
-  text-decoration: none;
-  background: var(--bg-tertiary);
-  transition: background 0.15s;
-}
-.proj-preview-fallback:hover { background: var(--bg-hover); }
 
 /* ─── GitHub Language Mini Bars ─── */
 .gh-langs-mini {
