@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { SIDEBAR_ASCII } from '../data/portfolio';
+import { } from '../data/portfolio';
 import './Sidebar.css';
 
 export default function Sidebar() {
   const [uptime, setUptime] = useState('0d 0h 0m');
   const [resolution, setResolution] = useState('');
-  const [stats, setStats] = useState({
-    cpu: 73, mem: 42, dsk: 61
-  });
+  const [stats, setStats] = useState({ cpu: 73, mem: 42, dsk: 61 });
+  const [ghImgLoaded, setGhImgLoaded] = useState(false);
+  const [graphImgLoaded, setGraphImgLoaded] = useState(false);
 
   useEffect(() => {
     setResolution(`${window.innerWidth}x${window.innerHeight}`);
@@ -20,8 +20,6 @@ export default function Sidebar() {
       const h = Math.floor(m / 60);
       const d = Math.floor(h / 24);
       setUptime(`${d}d ${h % 24}h ${m % 60}m`);
-
-      // Animate stats slightly
       setStats({
         cpu: 73 + Math.floor(Math.random() * 8 - 4),
         mem: 42 + Math.floor(Math.random() * 6 - 3),
@@ -29,11 +27,8 @@ export default function Sidebar() {
       });
     }, 5000);
 
-    const handleResize = () => {
-      setResolution(`${window.innerWidth}x${window.innerHeight}`);
-    };
+    const handleResize = () => setResolution(`${window.innerWidth}x${window.innerHeight}`);
     window.addEventListener('resize', handleResize);
-
     return () => {
       clearInterval(interval);
       window.removeEventListener('resize', handleResize);
@@ -42,8 +37,20 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
+      {/* Neofetch */}
       <div className="neofetch">
-        <pre className="ascii-art">{SIDEBAR_ASCII}</pre>
+        <div className="sidebar-video-wrap">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="sidebar-video"
+          >
+            <source src="/hunt-showdown.mp4" type="video/mp4" />
+          </video>
+          <div className="sidebar-video-overlay" />
+        </div>
         <div className="system-info">
           <InfoLine label="OS" value="KrishOS v2.0" />
           <InfoLine label="Host" value="Portfolio System" />
@@ -51,7 +58,7 @@ export default function Sidebar() {
           <InfoLine label="Uptime" value={uptime} />
           <InfoLine label="Shell" value="krish-sh 5.2" />
           <InfoLine label="Resolution" value={resolution} />
-          <InfoLine label="Theme" value="Cyber Neon" />
+          <InfoLine label="Theme" value="Amber CRT" />
           <InfoLine label="Terminal" value="portfolio-term" />
           <div className="info-separator" />
           <div className="color-blocks">
@@ -61,10 +68,50 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
+
+      {/* System Stats */}
       <div className="sidebar-stats">
         <StatBar label="CPU" value={stats.cpu} />
         <StatBar label="MEM" value={stats.mem} />
         <StatBar label="DSK" value={stats.dsk} />
+      </div>
+
+      {/* GitHub Stats */}
+      <div className="gh-section">
+        <div className="gh-section-title">
+          <span className="gh-icon">◈</span> GitHub Stats
+        </div>
+
+        {/* Streak Stats */}
+        <div className="gh-image-wrap">
+          {!ghImgLoaded && <div className="gh-placeholder">Loading streak stats...</div>}
+          <img
+            src="https://streak-stats.demolab.com?user=krishrathi1&theme=dark&hide_border=true&border_radius=4&background=0a0600&ring=ffb000&fire=ff7700&currStreakLabel=ffd699&sideLabels=b37b00&dates=b37b00&stroke=ffb00033&currStreakNum=ffcc00&sideNums=ffc44d&mode=daily"
+            alt="GitHub Streak Stats"
+            className={`gh-img ${ghImgLoaded ? 'gh-img-visible' : ''}`}
+            onLoad={() => setGhImgLoaded(true)}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        </div>
+
+        {/* Contribution Graph */}
+        <div className="gh-image-wrap" style={{ marginTop: 8 }}>
+          {!graphImgLoaded && <div className="gh-placeholder">Loading contribution graph...</div>}
+          <img
+            src="https://github-readme-activity-graph.vercel.app/graph?username=krishrathi1&theme=react-dark&hide_border=true&area=true&area_color=ffb000&line=ffb000&point=ffcc00&color=ffd699&bg_color=0a0600&height=120"
+            alt="GitHub Contribution Graph"
+            className={`gh-img ${graphImgLoaded ? 'gh-img-visible' : ''}`}
+            onLoad={() => setGraphImgLoaded(true)}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        </div>
+
+        {/* Quick stats row */}
+        <div className="gh-quick-stats">
+          <QuickStat label="Contributions" value="1,389+" />
+          <QuickStat label="Cur. Streak" value="4 days" />
+          <QuickStat label="Best Streak" value="37 days" />
+        </div>
       </div>
     </aside>
   );
@@ -86,6 +133,15 @@ function StatBar({ label, value }) {
         <div className="stat-fill" style={{ width: `${value}%` }} />
       </div>
       <span className="stat-value">{value}%</span>
+    </div>
+  );
+}
+
+function QuickStat({ label, value }) {
+  return (
+    <div className="gh-quick-stat">
+      <span className="gh-quick-value">{value}</span>
+      <span className="gh-quick-label">{label}</span>
     </div>
   );
 }

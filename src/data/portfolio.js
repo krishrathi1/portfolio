@@ -1,118 +1,132 @@
 // ─── Portfolio Data ─── All your personal info in one place
 export const PORTFOLIO = {
   name: "Krish Rathi",
-  title: "Full-Stack Developer & AI Enthusiast",
-  location: "India",
-  email: "krish@example.com",
-  github: "https://github.com/krishrathi",
-  linkedin: "https://linkedin.com/in/krishrathi",
-  twitter: "https://twitter.com/krishrathi",
+  title: "Full-Stack & AI/ML Developer | Chatbot Expert",
+  location: "Gurgaon, Haryana, India",
+  email: "krishrathi877@gmail.com",
+  phone: "+91 9352339808",
+  github: "https://github.com/krishrathi1",
+  linkedin: "https://linkedin.com/in/krish-rathi",
   website: "https://krishrathi.dev",
   bio: [
-    "Passionate developer with a keen interest in building innovative",
-    "solutions at the intersection of AI, web development, and creative",
-    "technology. I love turning complex problems into elegant, user-",
-    "friendly experiences."
+    "Hey there! I'm Krish Rathi — an AI/ML & Full-Stack Developer",
+    "who loves turning ideas into working code. I've built chatbots,",
+    "EdTech SaaS platforms, and AI-powered tools that make tech",
+    "more human. Always learning, building, and hacking on something new."
   ],
   about: {
     Name: "Krish Rathi",
-    Role: "Full-Stack Developer & AI Enthusiast",
-    Location: "India",
+    Role: "Full-Stack & AI/ML Developer",
+    Location: "Gurgaon, Haryana",
+    University: "BML Munjal University",
+    Degree: "B.Tech CS (2023-2027)",
     Languages: "English, Hindi",
-    Interests: "AI/ML, Web Dev, Open Source, Creative Coding",
-    Editor: "VS Code + Neovim",
-    OS: "Windows 11 / Ubuntu",
-    Hobbies: "Music, Chess, Photography"
+    Interests: "AI/ML, Web Dev, Hackathons, LLMs",
+    Editor: "VS Code",
+    OS: "Windows 11",
+    Hobbies: "Competitive Coding, Building AI tools"
   },
+  achievements: [
+    "IIT Ropar Hackathon Winner (2025) — Innovation Track",
+    "3rd Prize — AI Agentic Hackathon by Swafinix Technologies",
+    "4th Prize — Amity University App Innovation Challenge",
+    "Top 25 — Google 30-Hour Agentic Hackathon",
+    "Finalist — LNMIIT Jaipur Hackathon",
+    "3x wins and 6x national-level finalist in AI/ML & Full Stack"
+  ],
   skills: {
     Languages: [
       { name: "JavaScript", level: 90 },
       { name: "Python", level: 88 },
-      { name: "TypeScript", level: 82 },
-      { name: "C++", level: 70 },
-      { name: "Rust", level: 55 }
+      { name: "TypeScript", level: 85 },
+      { name: "Java", level: 72 },
+      { name: "C/C++", level: 70 }
     ],
     Frontend: [
-      { name: "React", level: 88 },
-      { name: "Next.js", level: 82 },
+      { name: "React", level: 90 },
+      { name: "Next.js", level: 88 },
       { name: "HTML/CSS", level: 92 },
-      { name: "Three.js", level: 65 },
-      { name: "Tailwind", level: 85 }
+      { name: "PWA/SSR", level: 82 },
+      { name: "GraphQL", level: 75 }
     ],
     Backend: [
       { name: "Node.js", level: 86 },
       { name: "Express", level: 84 },
-      { name: "FastAPI", level: 78 },
+      { name: "Firebase", level: 88 },
       { name: "PostgreSQL", level: 75 },
       { name: "MongoDB", level: 72 }
     ],
     "AI/ML": [
-      { name: "PyTorch", level: 76 },
-      { name: "HuggingFace", level: 80 },
-      { name: "LangChain", level: 74 },
-      { name: "Fine-tuning", level: 78 },
-      { name: "RAG Systems", level: 72 }
+      { name: "LLM Fine-tuning", level: 85 },
+      { name: "RAG Systems", level: 83 },
+      { name: "Gemini AI", level: 88 },
+      { name: "Genkit AI", level: 80 },
+      { name: "TensorFlow", level: 74 }
     ],
-    DevOps: [
-      { name: "Docker", level: 78 },
-      { name: "Git", level: 90 },
-      { name: "Linux", level: 82 },
-      { name: "CI/CD", level: 70 },
-      { name: "AWS", level: 65 }
+    Cloud: [
+      { name: "AWS Lambda", level: 80 },
+      { name: "AWS Rekognition", level: 78 },
+      { name: "Firebase Hosting", level: 88 },
+      { name: "Docker", level: 75 },
+      { name: "Vertex AI", level: 76 }
     ]
   },
   projects: [
     {
-      name: "Neural Prompt Optimizer",
-      desc: "A 10-stage neural prompt optimization engine for Stable Diffusion with genetic evolution loops, context-aware negative prompt shielding, and CLIP-based scoring.",
-      tech: ["Python", "PyTorch", "Stable Diffusion", "CLIP"],
-      github: "#",
+      name: "StockVision",
+      desc: "Production-grade AI stock analytics platform with Gemini AI for natural language insights, real-time price feeds, financial news aggregation, and semantic search. SSR-optimized with Next.js App Router and edge caching.",
+      tech: ["Next.js", "Gemini AI", "TypeScript", "REST APIs"],
+      github: "https://github.com/krishrathi1",
       live: "#"
     },
     {
-      name: "LLaMA 3.2 Fine-Tuner",
-      desc: "QLoRA/PEFT fine-tuning pipeline for LLaMA 3.2 with custom datasets, integrated RAG assistant, and comprehensive benchmarking suite.",
-      tech: ["Python", "HuggingFace", "LoRA", "RAG"],
-      github: "#",
+      name: "KishanBhai",
+      desc: "Multilingual (5+ languages) offline-first PWA with 10+ AI features — crop disease detection via Gemini multimodal vision, conversational assistance, and market analytics across 100+ commodities. Firebase + Genkit backend.",
+      tech: ["Next.js", "Genkit", "Firebase", "Gemini AI"],
+      github: "https://github.com/krishrathi1",
       live: "#"
     },
     {
-      name: "Crypto Trading Platform",
-      desc: "Real-time cryptocurrency trading dashboard with interactive charts, global adoption heatmap, and portfolio analytics.",
-      tech: ["React", "Next.js", "D3.js", "WebSocket"],
-      github: "#",
+      name: "Agentic AI Browser",
+      desc: "LLM-powered agentic browser with autonomous multi-step task execution, semantic web search, summarization, and workflow automation via tool-use and chain-of-thought prompting. Zero-GPU execution.",
+      tech: ["Next.js", "TypeScript", "LLMs", "Agentic AI"],
+      github: "https://github.com/krishrathi1",
       live: "#"
     },
     {
       name: "Terminal Portfolio",
-      desc: "This very website! An interactive terminal-style portfolio built with React + Vite, featuring boot sequences, neofetch, and 20+ commands.",
+      desc: "This very website! An interactive terminal-style portfolio built with React + Vite, featuring a CRT amber theme, boot sequences, neofetch, snake game, and 25+ commands.",
       tech: ["React", "Vite", "CSS", "Love"],
-      github: "#",
+      github: "https://github.com/krishrathi1",
       live: "#"
     }
   ],
   education: [
     {
-      degree: "Bachelor of Technology in Computer Science",
-      school: "University Name",
-      year: "2022 — 2026",
-      details: "Focus on AI/ML, Data Structures, and Software Engineering"
+      degree: "B.Tech in Computer Science",
+      school: "BML Munjal University",
+      year: "2023 — 2027",
+      details: "Coursework: DSA, OS, DBMS, Machine Learning, Computer Networks"
     }
   ],
   experience: [
     {
-      title: "Full-Stack Developer",
-      company: "Freelance / Open Source",
-      duration: "2023 — Present",
-      desc: "Building web applications, AI-powered tools, and contributing to open-source projects."
-    },
-    {
-      title: "AI/ML Researcher",
-      company: "Personal Projects",
-      duration: "2024 — Present",
-      desc: "Fine-tuning LLMs, building RAG systems, and experimenting with generative AI pipelines."
+      title: "Chatbot Developer Intern",
+      company: "RANNLAB Technologies",
+      duration: "Jun 2025 — Nov 2025",
+      desc: "Designed a scalable AI-driven educational chatbot using LLM fine-tuning and RAG pipelines, reducing manual support load by 70%. Built facial recognition pipeline with AWS Rekognition achieving 98.87% accuracy securing 1,000+ daily users. Developed serverless AWS Lambda media preprocessing pipeline improving throughput by 30%."
     }
-  ]
+  ],
+  certifications: [
+    "Google Cloud: Generative AI Fundamentals",
+    "Introduction to Large Language Models — Google Cloud",
+    "Responsible AI — Google Cloud Skills Boost"
+  ],
+  dsa: {
+    problems: "280+",
+    platforms: "LeetCode & Codeforces",
+    topics: "Dynamic Programming, Graphs, Trees, System Design"
+  }
 };
 
 // ─── ASCII Art ───

@@ -114,6 +114,95 @@
   text-align: right;
 }
 
+/* ─── GitHub Stats Section ─── */
+.gh-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px dashed var(--border-color);
+}
+
+.gh-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.gh-icon {
+  font-size: 0.8rem;
+  color: var(--accent-yellow);
+  text-shadow: var(--glow-cyan);
+}
+
+.gh-image-wrap {
+  width: 100%;
+  min-height: 48px;
+  position: relative;
+}
+
+.gh-placeholder {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 8px 0;
+  font-style: italic;
+}
+
+.gh-img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  filter: saturate(0.9) brightness(0.95);
+}
+
+.gh-img-visible {
+  opacity: 1;
+}
+
+/* Quick stats row */
+.gh-quick-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.gh-quick-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 2px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.gh-quick-value {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent-yellow);
+  text-shadow: 0 0 8px rgba(255, 176, 0, 0.5);
+  white-space: nowrap;
+}
+
+.gh-quick-label {
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.2;
+}
+
 @media (max-width: 900px) {
   .sidebar {
     display: none;

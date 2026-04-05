@@ -104,7 +104,7 @@ function getNode(path) {
 // ──────────────────────────────────────────────
 const COMMAND_CATEGORIES = {
   "Navigation": ["help", "ls", "cd", "cat", "pwd", "find", "clear", "banner"],
-  "About Me": ["about", "skills", "projects", "experience", "education", "whoami"],
+  "About Me": ["about", "skills", "projects", "experience", "education", "whoami", "achievements", "certifications", "dsa"],
   "Contact": ["contact", "resume", "socials"],
   "System": ["date", "uptime", "neofetch", "history", "echo", "alias"],
   "Fun": ["sudo", "matrix", "fortune", "weather", "theme", "snake", "sl", "rm", "credits", "exit"],
@@ -428,9 +428,9 @@ commands.contact = {
     ctx.appendHtml('<div class="section-header">📬  Contact</div>');
     const contacts = [
       { icon: "✉", label: "Email", value: `<a href="mailto:${PORTFOLIO.email}">${PORTFOLIO.email}</a>` },
+      { icon: "📞", label: "Phone", value: PORTFOLIO.phone },
       { icon: "⚡", label: "GitHub", value: `<a href="${PORTFOLIO.github}" target="_blank" rel="noopener">${PORTFOLIO.github}</a>` },
       { icon: "💼", label: "LinkedIn", value: `<a href="${PORTFOLIO.linkedin}" target="_blank" rel="noopener">${PORTFOLIO.linkedin}</a>` },
-      { icon: "🐦", label: "Twitter", value: `<a href="${PORTFOLIO.twitter}" target="_blank" rel="noopener">${PORTFOLIO.twitter}</a>` },
       { icon: "🌐", label: "Website", value: `<a href="${PORTFOLIO.website}" target="_blank" rel="noopener">${PORTFOLIO.website}</a>` }
     ];
     for (const c of contacts) {
@@ -484,6 +484,50 @@ commands.whoami = {
   fn: (args, ctx) => {
     ctx.appendHtml(`<span style="color:var(--accent-green);font-weight:600">krish</span> <span class="output-info">— ${PORTFOLIO.title}</span>`);
     ctx.appendHtml(`<span style="color:var(--accent-green)">◉</span> <span style="color:var(--text-secondary);font-size:0.8rem">Available for hire</span>`);
+    ctx.appendHtml(`<span style="color:var(--text-muted);font-size:0.75rem">📍 ${PORTFOLIO.location} | 🎓 BML Munjal University (2023-2027)</span>`);
+  }
+};
+
+// ─── achievements ───
+commands.achievements = {
+  desc: "Show hackathon wins and awards",
+  fn: (args, ctx) => {
+    ctx.appendHtml('<div class="section-header">🏆  Achievements & Awards</div>');
+    PORTFOLIO.achievements.forEach((a, i) => {
+      const medals = ['🥇','🥉','🏅','🔹','🎯','🌟'];
+      const medal = medals[i] || '⭐';
+      ctx.appendHtml(`<div style="padding:4px 12px;font-size:0.82rem"><span style="color:var(--accent-yellow)">${medal}</span> <span style="color:var(--text-secondary)">${a}</span></div>`);
+    });
+    ctx.appendHtml(`<div style="margin-top:8px;color:var(--text-muted);font-size:0.75rem;padding-left:12px">🎮 DSA: ${PORTFOLIO.dsa.problems} problems on ${PORTFOLIO.dsa.platforms}</div>`);
+    ctx.appendHtml(`<div style="color:var(--text-muted);font-size:0.75rem;padding-left:12px">🧠 Topics: ${PORTFOLIO.dsa.topics}</div>`);
+  }
+};
+
+// ─── certifications ───
+commands.certifications = {
+  desc: "List certifications and credentials",
+  fn: (args, ctx) => {
+    ctx.appendHtml('<div class="section-header">📜  Certifications</div>');
+    ctx.appendHtml(`<div style="color:var(--accent-yellow);font-size:0.75rem;padding-left:12px;margin-bottom:8px">Google Cloud Skills Boost</div>`);
+    PORTFOLIO.certifications.forEach(cert => {
+      ctx.appendHtml(`<div style="padding:3px 12px;font-size:0.82rem"><span style="color:var(--accent-green)">✓</span> <span style="color:var(--text-secondary)">${cert}</span></div>`);
+    });
+  }
+};
+
+// ─── dsa ───
+commands.dsa = {
+  desc: "Show competitive programming stats",
+  fn: (args, ctx) => {
+    ctx.appendHtml('<div class="section-header">⚡  Competitive Programming / DSA</div>');
+    ctx.appendHtml(`<div style="padding:12px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;margin:4px 0">
+      <div style="color:var(--accent-cyan);font-weight:700;margin-bottom:8px">📊 Stats</div>
+      <div style="font-size:0.82rem;line-height:2">
+        <div><span style="color:var(--accent-yellow);display:inline-block;width:120px">Problems Solved:</span><span style="color:var(--text-primary);font-weight:700">${PORTFOLIO.dsa.problems}</span></div>
+        <div><span style="color:var(--accent-yellow);display:inline-block;width:120px">Platforms:</span><span style="color:var(--text-secondary)">${PORTFOLIO.dsa.platforms}</span></div>
+        <div><span style="color:var(--accent-yellow);display:inline-block;width:120px">Topics:</span><span style="color:var(--text-secondary)">${PORTFOLIO.dsa.topics}</span></div>
+      </div>
+    </div>`);
   }
 };
 
