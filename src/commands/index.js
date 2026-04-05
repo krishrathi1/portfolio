@@ -2,6 +2,7 @@ import {
   PORTFOLIO, SIDEBAR_ASCII, FORTUNES,
   THEMES, WEATHER_CONDITIONS, SUDO_RESPONSES
 } from '../data/portfolio';
+import { fetchProfile, fetchRepos, getLanguageStats, LANG_COLORS, USERNAME_GH } from '../utils/github';
 
 // ──────────────────────────────────────────────
 // VIRTUAL FILESYSTEM
@@ -104,11 +105,12 @@ function getNode(path) {
 // ──────────────────────────────────────────────
 const COMMAND_CATEGORIES = {
   "Navigation": ["help", "ls", "cd", "cat", "pwd", "find", "clear", "banner"],
-  "About Me": ["about", "skills", "projects", "experience", "education", "whoami", "achievements", "certifications", "dsa"],
+  "About Me": ["about", "skills", "projects", "experience", "education", "whoami", "achievements", "certifications", "dsa", "timeline"],
+  "GitHub": ["github", "repos", "langs"],
   "Contact": ["contact", "resume", "socials"],
-  "System": ["date", "uptime", "neofetch", "history", "echo", "alias"],
-  "Fun": ["sudo", "matrix", "fortune", "weather", "theme", "snake", "sl", "rm", "credits", "exit"],
-  "Utility": ["share", "repo"]
+  "System": ["date", "uptime", "neofetch", "history", "echo", "alias", "top"],
+  "Fun": ["sudo", "matrix", "fortune", "weather", "theme", "snake", "sl", "rm", "hack", "ping", "credits", "exit"],
+  "Utility": ["dashboard", "share", "repo"]
 };
 
 const commands = {};

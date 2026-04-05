@@ -102,8 +102,8 @@ export default function App() {
           height: '100vh',
           objectFit: 'cover',
           zIndex: -2,
-          opacity: 0.3,
-          filter: 'sepia(1) hue-rotate(-20deg) saturate(2.5) brightness(0.5) contrast(1.1)'
+          opacity: 0.1,
+          filter: 'sepia(1) hue-rotate(-20deg) saturate(2) brightness(0.4) contrast(1.1)'
         }}
       >
         <source src="/hunt-showdown.mp4" type="video/mp4" />

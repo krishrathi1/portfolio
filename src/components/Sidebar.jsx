@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { } from '../data/portfolio';
+import { useState, useEffect, useRef } from 'react';
 import './Sidebar.css';
 
 export default function Sidebar() {
@@ -8,6 +7,41 @@ export default function Sidebar() {
   const [stats, setStats] = useState({ cpu: 73, mem: 42, dsk: 61 });
   const [ghImgLoaded, setGhImgLoaded] = useState(false);
   const [graphImgLoaded, setGraphImgLoaded] = useState(false);
+  const videoRef = useRef(null);
+
+  // Keep video playing — restart if it pauses/stops
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    const ensurePlaying = () => {
+      if (vid.paused) vid.play().catch(() => {});
+    };
+
+    vid.play().catch(() => {});
+
+    vid.addEventListener('pause', ensurePlaying);
+    vid.addEventListener('ended', ensurePlaying);
+    vid.addEventListener('stalled', ensurePlaying);
+    vid.addEventListener('suspend', ensurePlaying);
+
+    // Poll every 2s as a fallback
+    const poll = setInterval(ensurePlaying, 2000);
+
+    const handleVisibility = () => {
+      if (!document.hidden) ensurePlaying();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      vid.removeEventListener('pause', ensurePlaying);
+      vid.removeEventListener('ended', ensurePlaying);
+      vid.removeEventListener('stalled', ensurePlaying);
+      vid.removeEventListener('suspend', ensurePlaying);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      clearInterval(poll);
+    };
+  }, []);
 
   useEffect(() => {
     setResolution(`${window.innerWidth}x${window.innerHeight}`);
@@ -41,6 +75,7 @@ export default function Sidebar() {
       <div className="neofetch">
         <div className="sidebar-video-wrap">
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
