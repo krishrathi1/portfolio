@@ -5,7 +5,6 @@ import './Sidebar.css';
 export default function Sidebar() {
   const [uptime, setUptime] = useState('0d 0h 0m');
   const [resolution, setResolution] = useState('');
-  const [stats, setStats] = useState({ cpu: 73, mem: 42, dsk: 61 });
   const [ghImgLoaded, setGhImgLoaded] = useState(false);
   const [graphImgLoaded, setGraphImgLoaded] = useState(false);
   const [ghData, setGhData] = useState(null);
@@ -21,11 +20,6 @@ export default function Sidebar() {
       const h = Math.floor(m / 60);
       const d = Math.floor(h / 24);
       setUptime(`${d}d ${h % 24}h ${m % 60}m`);
-      setStats({
-        cpu: 73 + Math.floor(Math.random() * 8 - 4),
-        mem: 42 + Math.floor(Math.random() * 6 - 3),
-        dsk: 61
-      });
     }, 5000);
 
     const handleResize = () => setResolution(`${window.innerWidth}x${window.innerHeight}`);
@@ -69,20 +63,29 @@ export default function Sidebar() {
           <InfoLine label="Resolution" value={resolution} />
           <InfoLine label="Theme" value="Amber CRT" />
           <InfoLine label="Terminal" value="portfolio-term" />
-          <div className="info-separator" />
-          <div className="color-blocks">
-            {['#1a1b26','#f7768e','#9ece6a','#e0af68','#7aa2f7','#bb9af7','#7dcfff','#c0caf5'].map(c => (
-              <span key={c} className="color-block" style={{ background: c }} />
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* System Stats */}
-      <div className="sidebar-stats">
-        <StatBar label="CPU" value={stats.cpu} />
-        <StatBar label="MEM" value={stats.mem} />
-        <StatBar label="DSK" value={stats.dsk} />
+      {/* Live Project Previews */}
+      <div className="gh-section">
+        <div className="gh-section-title">
+          <span className="gh-icon">◈</span> Live Projects
+        </div>
+        <ProjectPreview
+          label="Clario"
+          url="https://clario.codes/"
+          desc="AI Agentic Browser"
+        />
+        <ProjectPreview
+          label="StockVision"
+          url="https://mystockvision.com/"
+          desc="AI Stock Intelligence"
+        />
+        <ProjectPreview
+          label="KishanBhai"
+          url="https://studio--krishimitra-ai-l2tup.us-central1.hosted.app/dashboard"
+          desc="Agricultural AI Platform"
+        />
       </div>
 
       {/* Live GitHub Stats */}
@@ -163,14 +166,42 @@ function InfoLine({ label, value }) {
   );
 }
 
-function StatBar({ label, value }) {
+function ProjectPreview({ label, url, desc }) {
+  const [blocked, setBlocked] = useState(false);
+
   return (
-    <div className="stat-item">
-      <span className="stat-label">{label}</span>
-      <div className="stat-bar">
-        <div className="stat-fill" style={{ width: `${value}%` }} />
+    <div className="proj-preview">
+      <div className="proj-preview-header">
+        <span className="proj-preview-dot" />
+        <span className="proj-preview-label">{label}</span>
+        <span className="proj-preview-desc">{desc}</span>
+        <a href={url} target="_blank" rel="noopener" className="proj-preview-open" title="Open">↗</a>
       </div>
-      <span className="stat-value">{value}%</span>
+      {blocked ? (
+        <a href={url} target="_blank" rel="noopener" className="proj-preview-fallback">
+          <span>⟨ Click to open {label} ↗ ⟩</span>
+        </a>
+      ) : (
+        <div className="proj-preview-frame-wrap">
+          <iframe
+            src={url}
+            title={label}
+            className="proj-preview-iframe"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+            onError={() => setBlocked(true)}
+            onLoad={(e) => {
+              try {
+                // detect blank / X-Frame-Options block
+                const doc = e.target.contentDocument;
+                if (!doc || doc.body?.innerHTML === '') setBlocked(true);
+              } catch {
+                setBlocked(true);
+              }
+            }}
+          />
+          <a href={url} target="_blank" rel="noopener" className="proj-preview-click-shield" />
+        </div>
+      )}
     </div>
   );
 }
