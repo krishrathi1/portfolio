@@ -1,0 +1,155 @@
+
+>_  TERMINAL PORTFOLIO
+Product Requirements Document
+Version 1.0  •  2025  •  CONFIDENTIAL
+
+
+
+
+1.  Executive Summary
+This document defines the complete product requirements for a terminal-based developer portfolio — a web application that emulates a real Unix terminal as its entire user interface. Unlike conventional portfolio sites, every interaction occurs through typed commands, creating an experience that is memorable, technically impressive, and deeply personal to developers.
+
+The portfolio targets two primary audiences: technical recruiters evaluating engineering depth, and fellow developers who appreciate craftsmanship. The terminal metaphor allows the creator to showcase not just what they have built, but how they think.
+
+2.  Product Vision & Goals
+2.1  Vision Statement
+"To build the most memorable developer portfolio on the internet — one that makes every visitor stop, type, and smile."
+2.2  Goals
+Achieve 10,000+ unique visitors within 90 days of launch via organic dev community sharing
+Maintain average session duration above 4 minutes — 8x the industry average for portfolio sites
+Drive 15+ inbound job inquiries per month from senior engineering roles
+Earn features in developer newsletters: ByteByteGo, TLDR, CSS Tricks within Q2
+Rank on first page of Google for '[your name] developer portfolio'
+2.3  Non-Goals
+This is NOT a general-purpose terminal emulator — only portfolio-specific commands are supported
+No server-side rendering framework required — pure static site deployable on Vercel/Netlify
+Not optimised for SEO content crawlers — the JS-heavy nature is intentional and accepted
+
+3.  User Personas
+
+4.  Feature Specifications
+Each feature is rated by implementation difficulty: Easy (< 1 day), Medium (1-3 days), Hard (3-7 days), Wild (requires API keys + backend).
+
+4.1  Core Shell & Infrastructure
+
+4.2  Profile Commands
+
+4.3  Project Showcase
+
+4.4  Live Data & Integrations
+
+4.5  Interactivity & Easter Eggs
+
+4.6  AI-Powered Commands (Wildcard)
+
+5.  Technical Architecture
+5.1  Tech Stack
+5.2  Performance Requirements
+Initial load: < 1.5s LCP on 4G — code-split commands, lazy-load easter eggs
+Command response: < 50ms for local commands; < 500ms for API-backed commands
+Bundle size: < 150KB gzipped for core shell; plugins loaded on demand
+Lighthouse score: Performance 90+, Accessibility 85+, Best Practices 100
+Works offline: core commands (whoami, skills, projects) served from service worker cache
+
+6.  Milestone Timeline  (12 Weeks)
+
+7.  Risk Register
+
+8.  Success Metrics (KPIs)
+
+
+
+>_  End of Document  |  Terminal Portfolio PRD v1.0  |  Now go build something legendary.
+28
+Features | 7
+Sections | 12wk
+Timeline | 100%
+Impressiveness
+
+Aisha — Tech Recruiter
+Age 29  |  5yr experience  |  FAANG recruiter
+Pain: Reviews 80+ portfolios/week — all look the same
+Goal: Find engineers who have genuine depth and personality
+Win: She screenshots it and shares it in her Slack | Dev — Senior Engineer
+Age 32  |  8yr experience  |  Open source contributor
+Pain: Generic React portfolios make everyone look the same
+Goal: Find the Easter eggs, appreciate the craftsmanship
+Win: Stars the GitHub repo and tweets about it
+
+Command | Difficulty | Description
+$ command interpreter | Hard | Custom lexer with pipes, flags, history, tab-complete, aliases, Ctrl shortcuts
+$ boot sequence | Medium | Cinematic ASCII BIOS animation + figlet name banner + skip-on-revisit
+$ theme engine | Medium | 6 built-in themes (Dracula, Nord, Gruvbox…) swappable live with CSS vars
+$ mobile mode | Hard | Touch-friendly command pill bar, swipe gestures, responsive font scaling
+$ share [cmd] | Medium | Deep-link any command via URL query params + Vercel OG image per command
+
+Command | Difficulty | Description
+whoami | Easy | Animated hero card: ASCII portrait, name, role, location, hire-status indicator
+skills --matrix | Hard | Real-time ASCII progress bars grouped by category with --filter / --sort / --chart flags
+resume --download | Easy | Inline paginated viewer (j/k nav) + --pdf download + --json output in JSON:Resume schema
+experience | Medium | Timeline view with company, role, duration, key achievements formatted as git log
+education | Easy | Degree, institutions, certs with ASCII diploma art on --fancy flag
+
+Command | Difficulty | Description
+ls ~/projects | Medium | File-system metaphor — browse work via ls, cd, cat. Tech stack shown as file metadata
+cat README.md | Medium | Streams markdown with syntax highlighting, code blocks, paginated like less
+open [project] | Easy | Launches live demo in new tab with a satisfying 'opening...' animation
+find . -name '*.react' | Hard | Full find command emulation filtering projects by tech, year, type, status
+git log --portfolio | Hard | Live GitHub GraphQL API — contribution heatmap in ░▒▓█ chars + real commit history
+
+Command | Difficulty | Description
+status --live | Wild | Spotify now-playing (ASCII album art) + weather + analog ASCII clock + uptime counter
+blog ls / read [slug] | Medium | Full in-terminal blog: paginated markdown, syntax-highlighted code, source from MDX/Notion
+analytics --self | Wild | Public visitor stats: visits, top commands, referrers, ASCII traffic chart + world map
+weather [city] | Easy | Open-Meteo API — 7-day forecast as ASCII art weather glyphs
+
+Command | Difficulty | Description
+contact --send | Medium | Wizard-style multi-step form in terminal — EmailJS/Resend, flying-envelope success animation
+sudo hire me | Easy | Password prompt easter egg → 'access granted' confetti celebration
+snake / tetris | Hard | Fully playable games rendered in ASCII — arrow keys, score, high score in localStorage
+konami code | Easy | ↑↑↓↓←→←→BA triggers full Matrix rain animation overlay
+rm -rf / | Easy | Dramatic fake deletion cascade then 'just kidding :)' — must-have classic
+sl | Easy | ASCII steam train runs across the terminal screen (the classic Unix joke)
+fortune | Easy | Random dev wisdom, quotes, programming jokes from a curated list
+
+Command | Difficulty | Description
+ai chat | Wild | Claude API sub-shell pre-loaded with full resume — answers recruiter Qs in streaming text
+ai roast [url] | Wild | Fetches a website and AI-roasts its design choices — shareable output
+ai cover-letter [jd] | Wild | Paste a job description, get a tailored cover letter generated live, copy to clipboard
+
+Layer | Technology | Rationale
+Frontend | React 18 + TypeScript | Component model maps cleanly to terminal command registry
+Terminal Engine | xterm.js or custom | Full VT100 support; custom parser for pipe/flag syntax
+Styling | Tailwind CSS + CSS vars | Theme switching via single root CSS variable swap
+Hosting | Vercel (static + edge) | Edge functions for AI + analytics; free tier for static assets
+AI Backend | Claude API (Anthropic) | Streaming responses for the ai chat sub-shell command
+Data Layer | Vercel KV (Redis) | Rate limiting for AI; visitor analytics persistence
+Blog Source | MDX or Notion API | Markdown rendered inline in terminal with syntax highlighting
+Integrations | GitHub GraphQL, Spotify | Live data for git log and status --live commands
+
+Weeks | Phase | Deliverables
+1–2 | Foundation | Repo setup, terminal engine, command parser, history, tab-complete, boot animation
+3–4 | Core Content | whoami, skills, resume, experience, education, projects filesystem
+5–6 | Live Data | GitHub integration, Spotify status, blog reader, weather command
+7–8 | UX Polish | Theme engine, mobile mode, share links, deep-linking, OG images
+9–10 | Easter Eggs | All games, easter eggs, konami code, rm -rf /, fortune, sl
+11 | AI Features | Claude API chat shell, ai roast, ai cover-letter, rate limiting
+12 | Launch | Lighthouse audit, performance tuning, analytics, soft launch, community posting
+
+Risk | Likelihood | Impact | Mitigation
+Mobile UX — terminal is keyboard-first | High | High | Command pill bar + touch-friendly autocomplete strip above keyboard
+Accessibility — screen readers struggle with terminal | Medium | High | ARIA live regions on output; keyboard-only navigation guaranteed
+API rate limits (GitHub, Spotify, Claude) | Medium | Medium | Cache responses in Vercel KV; graceful fallbacks to static data
+JS-heavy site hurts SEO | High | Low | Pre-render static meta, OG images; accept trade-off consciously
+Claude API costs scale with traffic | Low | Medium | 10 msg/visitor rate limit via KV; edge function enforced
+
+Metric | Target | Timeframe
+Unique visitors | 10,000+ | 90 days post-launch
+Avg. session duration | > 4 minutes | Ongoing
+Commands executed per session | > 8 | Ongoing
+GitHub stars on portfolio repo | > 500 | 6 months
+Inbound job inquiries | > 15 / month | After 30 days
+Featured in dev newsletters | 3+ mentions | 6 months
+Lighthouse Performance score | >= 90 | Launch day
+Mobile bounce rate | < 40% | After mobile launch
+

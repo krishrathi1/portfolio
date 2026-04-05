@@ -1,0 +1,72 @@
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+}
+
+.boot-content {
+  width: 90%;
+  max-width: 700px;
+  text-align: left;
+}
+
+.boot-logo {
+  color: var(--accent-cyan);
+  font-size: 0.5rem;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  text-shadow: var(--glow-cyan);
+  white-space: pre;
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+.boot-log {
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  min-height: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.boot-line {
+  opacity: 0;
+  animation: bootLineIn 0.15s forwards;
+}
+
+.boot-ok { color: var(--accent-green); }
+.boot-warn { color: var(--accent-yellow); }
+.boot-info { color: var(--text-muted); }
+
+@keyframes bootLineIn {
+  to { opacity: 1; }
+}
+
+.boot-progress-container {
+  width: 100%;
+  height: 3px;
+  background: var(--bg-surface);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.boot-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+  border-radius: 3px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(125, 207, 255, 0.5);
+}
+
+.boot-progress-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

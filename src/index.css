@@ -1,0 +1,139 @@
+/* ============================================
+   TERMINAL PORTFOLIO — KRISH RATHI
+   Theme: Tokyo Night + Cyber Neon
+   ============================================ */
+
+:root {
+  /* Amber CRT Palette */
+  --bg-primary: #0a0600;
+  --bg-secondary: #0d0800;
+  --bg-tertiary: #1a1000;
+  --bg-surface: #241600;
+  --bg-hover: #332000;
+
+  /* Text */
+  --text-primary: #ffd699;
+  --text-secondary: #ffb000;
+  --text-muted: #b37b00;
+
+  /* Accent Colors (mapped to amber variations) */
+  --accent-cyan: #ffc44d;
+  --accent-blue: #ffaa00;
+  --accent-purple: #e69900;
+  --accent-magenta: #ff8800;
+  --accent-green: #ffb000;
+  --accent-yellow: #ffcc00;
+  --accent-orange: #ff7700;
+  --accent-red: #ff5500;
+
+  /* Glows */
+  --glow-cyan: 0 0 10px rgba(255, 176, 0, 0.4), 0 0 20px rgba(255, 176, 0, 0.2);
+  --glow-green: 0 0 10px rgba(255, 204, 0, 0.4), 0 0 20px rgba(255, 204, 0, 0.2);
+  --glow-purple: 0 0 10px rgba(255, 136, 0, 0.4), 0 0 20px rgba(255, 136, 0, 0.2);
+
+  /* Sizing */
+  --topbar-height: 38px;
+  --tabbar-height: 32px;
+  --statusbar-height: 24px;
+  --sidebar-width: 300px;
+
+  /* Fonts */
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+
+  /* Borders */
+  --border-color: rgba(255, 176, 0, 0.3);
+  --border-active: rgba(255, 176, 0, 0.6);
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::selection {
+  background: rgba(122, 162, 247, 0.3);
+  color: #fff;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Animations ─── */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes lineSlide {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bootLineIn {
+  to { opacity: 1; }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); filter: hue-rotate(0deg); }
+  20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+  40% { transform: translate(2px, -2px); filter: hue-rotate(180deg); }
+  60% { transform: translate(-1px, 1px); filter: hue-rotate(270deg); }
+  80% { transform: translate(1px, -1px); filter: hue-rotate(360deg); }
+  100% { transform: translate(0); filter: hue-rotate(0deg); }
+}
+
+@keyframes themeFlash {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.5); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+.glitch-effect {
+  animation: glitch 0.3s ease both;
+}
+
+.theme-switch {
+  animation: themeFlash 0.4s ease;
+}
