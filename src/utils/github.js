@@ -1,7 +1,7 @@
 // ─── GitHub API Utility ─── live data for krishrathi1
 const USERNAME = 'krishrathi1';
 const BASE = 'https://api.github.com';
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 const cache = {};
 

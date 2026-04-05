@@ -86,6 +86,25 @@ export default function Terminal() {
     if (!welcomeShownRef.current) {
       welcomeShownRef.current = true;
       showWelcome();
+      // Auto-run dashboard as default view
+      setTimeout(() => {
+        executeCommand('dashboard', {
+          appendHtml: (html) => setLines(prev => [...prev, { id: lineIdRef.current++, html }]),
+          clearOutput: () => setLines([]),
+          setTheme,
+          currentTheme,
+          commandHistory: [],
+          commandCount: 0,
+          startTime: startTimeRef.current,
+          triggerGlitch: () => { setGlitching(true); setTimeout(() => setGlitching(false), 300); },
+          toggleMatrix: () => {},
+          showWelcome,
+          updatePath: setCurrentDir,
+          startSnakeGame: () => { setSnakeActive(true); setInputDisabled(true); },
+          startContactWizard: () => {},
+          startDeletionAnimation: () => {},
+        });
+      }, 200);
     }
     inputRef.current?.focus();
   }, [showWelcome]);
