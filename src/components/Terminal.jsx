@@ -64,14 +64,11 @@ export default function Terminal() {
 
   // ─── Welcome message (only once) ───
   const showWelcome = useCallback(() => {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
-    const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
     const welcomeLines = [
       { html: `<pre class="welcome-ascii">${WELCOME_ASCII}</pre>` },
       { html: `<div class="welcome-tagline"><span class="wt-dot">◉</span> Full-Stack &amp; AI/ML Developer &nbsp;|&nbsp; Chatbot Expert &nbsp;|&nbsp; Hackathon Winner</div>` },
       { html: '' },
-      { html: `<div class="welcome-info-row"><span class="wi-key">os</span><span class="wi-sep">~</span><span class="wi-val">KrishOS v3.0 · React + Vite</span> &nbsp;&nbsp; <span class="wi-key">date</span><span class="wi-sep">~</span><span class="wi-val">${dateStr} ${timeStr}</span></div>` },
+      { html: `<div class="welcome-info-row"><span class="wi-key">os</span><span class="wi-sep">~</span><span class="wi-val">KrishOS v3.0 · React + Vite</span></div>` },
       { html: `<div class="welcome-info-row"><span class="wi-key">uni</span><span class="wi-sep">~</span><span class="wi-val">BML Munjal University · B.Tech CS · 2023–2027</span></div>` },
       { html: `<div class="welcome-info-row"><span class="wi-key">gh</span><span class="wi-sep">~</span><span class="wi-val"><a href="https://github.com/krishrathi1" target="_blank" style="color:var(--accent-cyan);text-decoration:none">github.com/krishrathi1</a> · 1,389+ contributions</span></div>` },
       { html: '' },
