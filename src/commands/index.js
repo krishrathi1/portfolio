@@ -918,6 +918,350 @@ commands.repo = {
 };
 
 
+// ─── github ───
+commands.github = {
+  desc: "Live GitHub profile stats",
+  fn: async (args, ctx) => {
+    ctx.appendHtml('<span class="output-info">⟳ Fetching GitHub profile...</span>');
+    try {
+      const [profile, repos] = await Promise.all([fetchProfile(), fetchRepos()]);
+      const totalStars = repos.reduce((s, r) => s + r.stargazers_count, 0);
+      const totalForks = repos.reduce((s, r) => s + r.forks_count, 0);
+      const langStats = getLanguageStats(repos).slice(0, 5);
+      const topRepo = [...repos].sort((a, b) => b.stargazers_count - a.stargazers_count)[0];
+
+      ctx.appendHtml(`
+        <div class="gh-profile-card">
+          <div class="gh-profile-header">
+            <div class="gh-avatar-placeholder">
+              <span class="gh-avatar-icon">◈</span>
+            </div>
+            <div class="gh-profile-meta">
+              <div class="gh-profile-name">${profile.name || profile.login}</div>
+              <div class="gh-profile-login">@${profile.login}</div>
+              <div class="gh-profile-bio">${profile.bio || 'Full-Stack & AI/ML Developer'}</div>
+            </div>
+          </div>
+          <div class="gh-stats-grid">
+            <div class="gh-stat-box"><span class="gh-stat-num">${profile.public_repos}</span><span class="gh-stat-lbl">Repos</span></div>
+            <div class="gh-stat-box"><span class="gh-stat-num">${totalStars}</span><span class="gh-stat-lbl">Stars</span></div>
+            <div class="gh-stat-box"><span class="gh-stat-num">${totalForks}</span><span class="gh-stat-lbl">Forks</span></div>
+            <div class="gh-stat-box"><span class="gh-stat-num">${profile.followers}</span><span class="gh-stat-lbl">Followers</span></div>
+          </div>
+          <div class="gh-lang-row">
+            ${langStats.map(l => {
+              const col = LANG_COLORS[l.lang] || 'var(--accent-cyan)';
+              return `<span class="gh-lang-badge" style="border-color:${col};color:${col}">
+                <span class="gh-lang-dot" style="background:${col}"></span>${l.lang} ${l.pct}%
+              </span>`;
+            }).join('')}
+          </div>
+          ${topRepo ? `<div class="gh-top-repo">⭐ Top repo: <a href="${topRepo.html_url}" target="_blank" class="gh-link">${topRepo.name}</a> — ${topRepo.stargazers_count} stars</div>` : ''}
+          <div class="gh-profile-footer">
+            <a href="${profile.html_url}" target="_blank" class="gh-link">github.com/${profile.login}</a>
+            ${profile.location ? `<span style="color:var(--text-muted)"> · 📍 ${profile.location}</span>` : ''}
+          </div>
+        </div>
+      `);
+    } catch (e) {
+      ctx.appendHtml(`<span class="output-error">✗ GitHub API error: ${e.message}</span>`);
+    }
+  }
+};
+
+// ─── repos ───
+commands.repos = {
+  desc: "List public GitHub repos (--sort stars|updated|name) (--lang js) (--top 10)",
+  fn: async (args, ctx) => {
+    const sortArg = args.match(/--sort\s+(\S+)/)?.[1] || 'updated';
+    const langArg = args.match(/--lang\s+(\S+)/)?.[1]?.toLowerCase();
+    const topN    = parseInt(args.match(/--top\s+(\d+)/)?.[1] || '999');
+    const search  = args.match(/--search\s+(\S+)/)?.[1]?.toLowerCase();
+
+    ctx.appendHtml('<span class="output-info">⟳ Fetching repositories...</span>');
+    try {
+      let repos = await fetchRepos();
+
+      if (langArg) repos = repos.filter(r => r.language?.toLowerCase().includes(langArg));
+      if (search)  repos = repos.filter(r => r.name.toLowerCase().includes(search) || (r.description || '').toLowerCase().includes(search));
+
+      if (sortArg === 'stars')   repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
+      else if (sortArg === 'name') repos.sort((a, b) => a.name.localeCompare(b.name));
+      else repos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+      repos = repos.slice(0, topN);
+
+      ctx.appendHtml(`<div class="section-header">📦  GitHub Repositories (${repos.length} shown)</div>`);
+      ctx.appendHtml(`<div style="color:var(--text-muted);font-size:0.7rem;margin-bottom:8px">Sort: <span style="color:var(--accent-yellow)">${sortArg}</span> · Flags: --sort stars|updated|name · --lang &lt;lang&gt; · --top &lt;n&gt; · --search &lt;term&gt;</div>`);
+
+      for (const r of repos) {
+        const lang = r.language || '—';
+        const col = LANG_COLORS[r.language] || 'var(--text-muted)';
+        const updated = new Date(r.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        ctx.appendHtml(`
+          <div class="repo-card">
+            <div class="repo-card-header">
+              <a href="${r.html_url}" target="_blank" class="repo-name">${r.name}</a>
+              ${r.topics?.slice(0,3).map(t => `<span class="repo-topic">${t}</span>`).join('') || ''}
+            </div>
+            <div class="repo-desc">${r.description ? escapeHtml(r.description) : '<span style="color:var(--text-muted);font-style:italic">No description</span>'}</div>
+            <div class="repo-meta">
+              <span class="repo-lang"><span class="repo-lang-dot" style="background:${col}"></span>${lang}</span>
+              <span class="repo-stat">⭐ ${r.stargazers_count}</span>
+              <span class="repo-stat">⑂ ${r.forks_count}</span>
+              <span class="repo-stat" style="color:var(--text-muted)">↻ ${updated}</span>
+            </div>
+          </div>
+        `);
+      }
+    } catch (e) {
+      ctx.appendHtml(`<span class="output-error">✗ GitHub API error: ${e.message}</span>`);
+    }
+  }
+};
+
+// ─── langs ───
+commands.langs = {
+  desc: "Show language breakdown from GitHub repos",
+  fn: async (args, ctx) => {
+    ctx.appendHtml('<span class="output-info">⟳ Analyzing language stats...</span>');
+    try {
+      const repos = await fetchRepos();
+      const stats = getLanguageStats(repos);
+      const maxPct = stats[0]?.pct || 1;
+
+      ctx.appendHtml('<div class="section-header">🌐  Language Breakdown</div>');
+      ctx.appendHtml(`<div style="color:var(--text-muted);font-size:0.7rem;margin-bottom:10px">Based on ${repos.length} public repos</div>`);
+
+      for (const { lang, count, pct } of stats) {
+        const col = LANG_COLORS[lang] || '#888';
+        const barW = Math.round((pct / maxPct) * 30);
+        const bar = '█'.repeat(barW) + '░'.repeat(30 - barW);
+        ctx.appendHtml(`
+          <div class="lang-row">
+            <span class="lang-dot" style="background:${col}"></span>
+            <span class="lang-name">${lang}</span>
+            <span class="lang-bar" style="color:${col}">${bar}</span>
+            <span class="lang-pct">${pct}%</span>
+            <span class="lang-count">(${count} repos)</span>
+          </div>
+        `);
+      }
+    } catch (e) {
+      ctx.appendHtml(`<span class="output-error">✗ ${e.message}</span>`);
+    }
+  }
+};
+
+// ─── timeline ───
+commands.timeline = {
+  desc: "Interactive career & achievement timeline",
+  fn: (args, ctx) => {
+    ctx.appendHtml('<div class="section-header">📅  Career Timeline</div>');
+    const events = [
+      { year: '2023', month: 'Aug', icon: '🎓', label: 'Started B.Tech CS', sub: 'BML Munjal University, Gurgaon', color: 'var(--accent-blue)' },
+      { year: '2023', month: 'Oct', icon: '💻', label: 'First GitHub commit', sub: '1,389+ contributions since', color: 'var(--accent-green)' },
+      { year: '2024', month: 'Jan', icon: '🤖', label: 'Began AI/ML journey', sub: 'LLM fine-tuning, RAG systems, Gemini AI', color: 'var(--accent-purple)' },
+      { year: '2024', month: 'Mar', icon: '🌾', label: 'Built KishanBhai', sub: 'Multilingual agricultural AI PWA (5+ langs)', color: 'var(--accent-yellow)' },
+      { year: '2024', month: 'Jun', icon: '📈', label: 'Built StockVision', sub: 'AI stock analytics with Gemini AI', color: 'var(--accent-cyan)' },
+      { year: '2025', month: 'Feb', icon: '🥇', label: 'IIT Ropar Hackathon Winner', sub: '3× wins · 6× national finalist', color: 'var(--accent-yellow)' },
+      { year: '2025', month: 'Feb', icon: '⭐', label: '37-day GitHub streak', sub: 'Longest streak · Feb 11 – Mar 19', color: 'var(--accent-green)' },
+      { year: '2025', month: 'Jun', icon: '🏢', label: 'RANNLAB Technologies Intern', sub: 'Chatbot Dev · LLM · AWS Rekognition 98.87%', color: 'var(--accent-orange)' },
+      { year: '2025', month: 'Nov', icon: '🚀', label: 'Agentic AI Browser launched', sub: 'Zero-GPU autonomous multi-step AI browser', color: 'var(--accent-magenta)' },
+      { year: '2027', month: 'May', icon: '🎓', label: 'Expected graduation', sub: 'B.Tech CS — BML Munjal University', color: 'var(--accent-blue)' },
+    ];
+
+    let html = '<div class="timeline">';
+    for (const ev of events) {
+      html += `
+        <div class="tl-item">
+          <div class="tl-date" style="color:${ev.color}">${ev.month} ${ev.year}</div>
+          <div class="tl-line-wrap"><div class="tl-dot" style="background:${ev.color};box-shadow:0 0 8px ${ev.color}"></div><div class="tl-line"></div></div>
+          <div class="tl-content">
+            <div class="tl-title">${ev.icon} ${ev.label}</div>
+            <div class="tl-sub">${ev.sub}</div>
+          </div>
+        </div>
+      `;
+    }
+    html += '</div>';
+    ctx.appendHtml(html);
+  }
+};
+
+// ─── dashboard ───
+commands.dashboard = {
+  desc: "Full overview dashboard",
+  fn: async (args, ctx) => {
+    ctx.appendHtml('<div class="section-header">🖥️  Dashboard — Krish Rathi</div>');
+
+    // Static info immediately
+    ctx.appendHtml(`
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card-title">👤 Identity</div>
+          <div class="dash-row"><span class="dash-lbl">Name</span><span class="dash-val">${PORTFOLIO.name}</span></div>
+          <div class="dash-row"><span class="dash-lbl">Role</span><span class="dash-val">${PORTFOLIO.title}</span></div>
+          <div class="dash-row"><span class="dash-lbl">Uni</span><span class="dash-val">BML Munjal University</span></div>
+          <div class="dash-row"><span class="dash-lbl">Year</span><span class="dash-val">2023 – 2027</span></div>
+          <div class="dash-row"><span class="dash-lbl">Status</span><span class="dash-val" style="color:var(--accent-green)">◉ Open to hire</span></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">⚡ Top Skills</div>
+          ${Object.entries(PORTFOLIO.skills).slice(0,3).map(([cat, skills]) =>
+            `<div class="dash-row"><span class="dash-lbl">${cat}</span><span class="dash-val">${skills.slice(0,3).map(s=>s.name).join(', ')}</span></div>`
+          ).join('')}
+          <div class="dash-row"><span class="dash-lbl">DSA</span><span class="dash-val">${PORTFOLIO.dsa.problems} problems</span></div>
+          <div class="dash-row"><span class="dash-lbl">AI/ML</span><span class="dash-val">LLM · RAG · Gemini · Genkit</span></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">🏆 Highlights</div>
+          ${PORTFOLIO.achievements.slice(0,4).map(a =>
+            `<div class="dash-row"><span class="dash-val" style="font-size:0.7rem">• ${a}</span></div>`
+          ).join('')}
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">📬 Contact</div>
+          <div class="dash-row"><span class="dash-lbl">Email</span><span class="dash-val"><a href="mailto:${PORTFOLIO.email}" class="gh-link">${PORTFOLIO.email}</a></span></div>
+          <div class="dash-row"><span class="dash-lbl">GitHub</span><span class="dash-val"><a href="${PORTFOLIO.github}" target="_blank" class="gh-link">@${USERNAME_GH}</a></span></div>
+          <div class="dash-row"><span class="dash-lbl">LinkedIn</span><span class="dash-val"><a href="${PORTFOLIO.linkedin}" target="_blank" class="gh-link">krish-rathi</a></span></div>
+          <div class="dash-row"><span class="dash-lbl">Phone</span><span class="dash-val">${PORTFOLIO.phone}</span></div>
+        </div>
+      </div>
+    `);
+
+    // Async GitHub stats
+    ctx.appendHtml('<span class="output-info">⟳ Fetching live GitHub stats...</span>');
+    try {
+      const [profile, repos] = await Promise.all([fetchProfile(), fetchRepos()]);
+      const totalStars = repos.reduce((s, r) => s + r.stargazers_count, 0);
+      const langStats = getLanguageStats(repos).slice(0, 4);
+      ctx.appendHtml(`
+        <div class="dash-grid" style="margin-top:8px">
+          <div class="dash-card">
+            <div class="dash-card-title">📦 GitHub Live</div>
+            <div class="dash-row"><span class="dash-lbl">Repos</span><span class="dash-val">${profile.public_repos}</span></div>
+            <div class="dash-row"><span class="dash-lbl">Stars</span><span class="dash-val">⭐ ${totalStars}</span></div>
+            <div class="dash-row"><span class="dash-lbl">Followers</span><span class="dash-val">${profile.followers}</span></div>
+            <div class="dash-row"><span class="dash-lbl">Contribs</span><span class="dash-val">1,389+</span></div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-card-title">🌐 Top Languages</div>
+            ${langStats.map(l => {
+              const col = LANG_COLORS[l.lang] || '#888';
+              const bar = '█'.repeat(Math.round(l.pct/5)) + '░'.repeat(20-Math.round(l.pct/5));
+              return `<div class="dash-row"><span class="lang-dot" style="background:${col}"></span><span class="dash-lbl" style="color:${col}">${l.lang}</span><span style="color:${col};font-size:0.65rem">${bar}</span><span class="dash-val">${l.pct}%</span></div>`;
+            }).join('')}
+          </div>
+        </div>
+      `);
+    } catch {
+      ctx.appendHtml('<span style="color:var(--text-muted);font-size:0.75rem">⚠ GitHub stats unavailable (API rate limit or offline)</span>');
+    }
+    ctx.appendHtml(`<div style="color:var(--text-muted);font-size:0.7rem;margin-top:8px">💡 Deep dive: github · repos · langs · projects · skills · timeline</div>`);
+  }
+};
+
+// ─── top ───
+commands.top = {
+  desc: "Show running processes (fun system monitor)",
+  fn: (args, ctx) => {
+    const processes = [
+      { pid: 1337, cpu: 42.1, mem: 18.3, name: 'passion.exe' },
+      { pid: 2048, cpu: 31.4, mem: 14.7, name: 'creativity.ko' },
+      { pid: 3141, cpu: 18.9, mem: 9.2,  name: 'problem-solver' },
+      { pid: 4096, cpu: 12.3, mem: 7.8,  name: 'react-renderer' },
+      { pid: 5000, cpu: 9.7,  mem: 6.1,  name: 'llm-engine.py' },
+      { pid: 6006, cpu: 8.2,  mem: 5.4,  name: 'caffeine-daemon' },
+      { pid: 7000, cpu: 5.1,  mem: 3.9,  name: 'git-commit-bot' },
+      { pid: 8080, cpu: 4.3,  mem: 3.2,  name: 'node-server' },
+      { pid: 9090, cpu: 2.1,  mem: 2.7,  name: 'idea-generator' },
+      { pid: 9999, cpu: 0.4,  mem: 1.1,  name: 'coffee.service' },
+    ];
+    const uptime = Math.floor((Date.now() - ctx.startTime) / 1000);
+    const h = Math.floor(uptime / 3600), m = Math.floor((uptime % 3600) / 60), s = uptime % 60;
+
+    ctx.appendHtml(`
+      <div style="font-family:var(--font-mono);font-size:0.78rem">
+        <div style="color:var(--accent-cyan);font-weight:700;margin-bottom:6px">
+          top — KrishOS v2.0 · uptime: ${h}h${m}m${s}s · tasks: ${processes.length} · theme: amber-crt
+        </div>
+        <div style="color:var(--text-muted);border-bottom:1px dashed var(--border-color);padding-bottom:4px;margin-bottom:4px">
+          <span style="display:inline-block;width:60px">PID</span>
+          <span style="display:inline-block;width:70px">%CPU</span>
+          <span style="display:inline-block;width:70px">%MEM</span>
+          <span>COMMAND</span>
+        </div>
+        ${processes.map((p, i) => {
+          const col = i === 0 ? 'var(--accent-yellow)' : i < 3 ? 'var(--accent-cyan)' : 'var(--text-secondary)';
+          return `<div style="color:${col}">
+            <span style="display:inline-block;width:60px">${p.pid}</span>
+            <span style="display:inline-block;width:70px">${p.cpu.toFixed(1)}</span>
+            <span style="display:inline-block;width:70px">${p.mem.toFixed(1)}</span>
+            <span>${p.name}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    `);
+  }
+};
+
+// ─── ping ───
+commands.ping = {
+  desc: "Ping a host (ping <host>)",
+  fn: async (args, ctx) => {
+    const host = args.trim() || 'github.com';
+    ctx.appendHtml(`<span class="output-info">PING ${escapeHtml(host)} (93.184.216.34) 56 bytes of data.</span>`);
+    for (let i = 1; i <= 4; i++) {
+      await new Promise(r => setTimeout(r, 350));
+      const ms = (Math.random() * 18 + 4).toFixed(3);
+      ctx.appendHtml(`<span style="color:var(--text-secondary)">64 bytes from ${escapeHtml(host)}: icmp_seq=${i} ttl=118 time=<span style="color:var(--accent-green)">${ms} ms</span></span>`);
+    }
+    await new Promise(r => setTimeout(r, 200));
+    ctx.appendHtml(`<span style="color:var(--text-muted)">--- ${escapeHtml(host)} ping statistics ---</span>`);
+    ctx.appendHtml(`<span style="color:var(--accent-green)">4 packets transmitted, 4 received, 0% packet loss</span>`);
+  }
+};
+
+// ─── hack ───
+commands.hack = {
+  desc: "Initiate hacker mode 🟢",
+  fn: async (args, ctx) => {
+    const lines = [
+      '> Initializing exploit framework v4.2.0...',
+      '> Scanning target: localhost:3000',
+      '> [WARN] Firewall detected — bypassing...',
+      '> Injecting payload: creativity.exe',
+      '> Brute-forcing: passion-algorithm [████████████] 100%',
+      '> CVE-2025-HIRE-ME — exploiting recruiter vulnerability...',
+      '> SSH tunnel established: krish@portfolio:~',
+      '> Downloading: skills.tar.gz [████████████] 100%',
+      '> Extracting: react, nextjs, python, llms, aws...',
+      '> Planting backdoor: sudo hire krish',
+      '> Covering tracks: rm -rf doubts/',
+      '> !! ACCESS GRANTED — Welcome to the matrix, recruiter.',
+    ];
+    const colors = [
+      'var(--accent-green)','var(--accent-cyan)','var(--accent-yellow)',
+      'var(--accent-green)','var(--accent-cyan)','var(--accent-yellow)',
+      'var(--accent-green)','var(--accent-cyan)','var(--accent-green)',
+      'var(--accent-yellow)','var(--accent-magenta)','var(--accent-yellow)',
+    ];
+    ctx.appendHtml(`<div style="font-size:0.8rem;color:var(--text-muted)">[ hack sequence initiated ]</div>`);
+    for (let i = 0; i < lines.length; i++) {
+      await new Promise(r => setTimeout(r, 220 + Math.random() * 180));
+      ctx.appendHtml(`<span style="color:${colors[i]};font-size:0.8rem">${lines[i]}</span>`);
+    }
+    await new Promise(r => setTimeout(r, 400));
+    ctx.appendHtml(`<div style="margin-top:8px;padding:10px 14px;border:1px solid var(--accent-green);background:rgba(0,255,0,0.04);font-size:0.82rem">
+      <div style="color:var(--accent-green);font-weight:700">✓ HIRE MODE ACTIVATED</div>
+      <div style="color:var(--text-secondary);margin-top:4px">Contact: <a href="mailto:${PORTFOLIO.email}" style="color:var(--accent-cyan)">${PORTFOLIO.email}</a></div>
+      <div style="color:var(--text-secondary)">GitHub: <a href="${PORTFOLIO.github}" target="_blank" style="color:var(--accent-cyan)">${PORTFOLIO.github}</a></div>
+    </div>`);
+    ctx.triggerGlitch();
+  }
+};
+
 // ──────────────────────────────────────────────
 // HELPERS
 // ──────────────────────────────────────────────

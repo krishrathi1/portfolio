@@ -138,6 +138,56 @@
   text-align: right;
 }
 
+/* ─── GitHub Language Mini Bars ─── */
+.gh-langs-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 6px 0;
+}
+
+.gh-lang-mini-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.65rem;
+}
+
+.gh-lang-mini-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gh-lang-mini-name {
+  width: 72px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gh-lang-mini-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.gh-lang-mini-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+.gh-lang-mini-pct {
+  color: var(--text-muted);
+  width: 26px;
+  text-align: right;
+}
+
 /* ─── GitHub Stats Section ─── */
 .gh-section {
   display: flex;

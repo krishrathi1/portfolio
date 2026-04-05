@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchProfile, fetchRepos, getLanguageStats, LANG_COLORS } from '../utils/github';
 import './Sidebar.css';
 
 export default function Sidebar() {
@@ -7,41 +8,7 @@ export default function Sidebar() {
   const [stats, setStats] = useState({ cpu: 73, mem: 42, dsk: 61 });
   const [ghImgLoaded, setGhImgLoaded] = useState(false);
   const [graphImgLoaded, setGraphImgLoaded] = useState(false);
-  const videoRef = useRef(null);
-
-  // Keep video playing — restart if it pauses/stops
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-
-    const ensurePlaying = () => {
-      if (vid.paused) vid.play().catch(() => {});
-    };
-
-    vid.play().catch(() => {});
-
-    vid.addEventListener('pause', ensurePlaying);
-    vid.addEventListener('ended', ensurePlaying);
-    vid.addEventListener('stalled', ensurePlaying);
-    vid.addEventListener('suspend', ensurePlaying);
-
-    // Poll every 2s as a fallback
-    const poll = setInterval(ensurePlaying, 2000);
-
-    const handleVisibility = () => {
-      if (!document.hidden) ensurePlaying();
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-
-    return () => {
-      vid.removeEventListener('pause', ensurePlaying);
-      vid.removeEventListener('ended', ensurePlaying);
-      vid.removeEventListener('stalled', ensurePlaying);
-      vid.removeEventListener('suspend', ensurePlaying);
-      document.removeEventListener('visibilitychange', handleVisibility);
-      clearInterval(poll);
-    };
-  }, []);
+  const [ghData, setGhData] = useState(null);
 
   useEffect(() => {
     setResolution(`${window.innerWidth}x${window.innerHeight}`);
@@ -69,21 +36,28 @@ export default function Sidebar() {
     };
   }, []);
 
+  // Fetch live GitHub data
+  useEffect(() => {
+    (async () => {
+      try {
+        const [profile, repos] = await Promise.all([fetchProfile(), fetchRepos()]);
+        const totalStars = repos.reduce((s, r) => s + r.stargazers_count, 0);
+        const langs = getLanguageStats(repos).slice(0, 4);
+        setGhData({ profile, repos, totalStars, langs });
+      } catch {}
+    })();
+  }, []);
+
   return (
     <aside className="sidebar">
       {/* Neofetch */}
       <div className="neofetch">
         <div className="sidebar-video-wrap">
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="sidebar-video"
-          >
-            <source src="/hunt-showdown.mp4" type="video/mp4" />
-          </video>
+          <img
+            src="https://media2.giphy.com/media/ZVik7pBtu9dNS/giphy.gif"
+            alt="hacker typing"
+            className="sidebar-gif"
+          />
           <div className="sidebar-video-overlay" />
         </div>
         <div className="system-info">
@@ -111,18 +85,48 @@ export default function Sidebar() {
         <StatBar label="DSK" value={stats.dsk} />
       </div>
 
-      {/* GitHub Stats */}
+      {/* Live GitHub Stats */}
       <div className="gh-section">
         <div className="gh-section-title">
-          <span className="gh-icon">◈</span> GitHub Stats
+          <span className="gh-icon">◈</span> GitHub Live
         </div>
 
-        {/* Streak Stats */}
-        <div className="gh-image-wrap">
-          {!ghImgLoaded && <div className="gh-placeholder">Loading streak stats...</div>}
+        {ghData ? (
+          <>
+            {/* Live counters */}
+            <div className="gh-quick-stats">
+              <QuickStat label="Repos" value={ghData.profile.public_repos} />
+              <QuickStat label="Stars" value={ghData.totalStars} />
+              <QuickStat label="Followers" value={ghData.profile.followers} />
+            </div>
+
+            {/* Language bars */}
+            <div className="gh-langs-mini">
+              {ghData.langs.map(({ lang, pct }) => {
+                const col = LANG_COLORS[lang] || '#888';
+                return (
+                  <div key={lang} className="gh-lang-mini-row">
+                    <span className="gh-lang-mini-dot" style={{ background: col }} />
+                    <span className="gh-lang-mini-name">{lang}</span>
+                    <div className="gh-lang-mini-bar">
+                      <div className="gh-lang-mini-fill" style={{ width: `${pct}%`, background: col }} />
+                    </div>
+                    <span className="gh-lang-mini-pct">{pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div className="gh-placeholder">⟳ Fetching live data...</div>
+        )}
+
+        {/* Streak image */}
+        <div className="gh-image-wrap" style={{ marginTop: 8 }}>
+          {!ghImgLoaded && <div className="gh-placeholder">Loading streak...</div>}
           <img
             src="https://streak-stats.demolab.com?user=krishrathi1&theme=dark&hide_border=true&border_radius=4&background=0a0600&ring=ffb000&fire=ff7700&currStreakLabel=ffd699&sideLabels=b37b00&dates=b37b00&stroke=ffb00033&currStreakNum=ffcc00&sideNums=ffc44d&mode=daily"
-            alt="GitHub Streak Stats"
+            alt="GitHub Streak"
             className={`gh-img ${ghImgLoaded ? 'gh-img-visible' : ''}`}
             onLoad={() => setGhImgLoaded(true)}
             onError={(e) => { e.target.style.display = 'none'; }}
@@ -130,21 +134,20 @@ export default function Sidebar() {
         </div>
 
         {/* Contribution Graph */}
-        <div className="gh-image-wrap" style={{ marginTop: 8 }}>
-          {!graphImgLoaded && <div className="gh-placeholder">Loading contribution graph...</div>}
+        <div className="gh-image-wrap" style={{ marginTop: 6 }}>
+          {!graphImgLoaded && <div className="gh-placeholder">Loading graph...</div>}
           <img
             src="https://github-readme-activity-graph.vercel.app/graph?username=krishrathi1&theme=react-dark&hide_border=true&area=true&area_color=ffb000&line=ffb000&point=ffcc00&color=ffd699&bg_color=0a0600&height=120"
-            alt="GitHub Contribution Graph"
+            alt="GitHub Contributions"
             className={`gh-img ${graphImgLoaded ? 'gh-img-visible' : ''}`}
             onLoad={() => setGraphImgLoaded(true)}
             onError={(e) => { e.target.style.display = 'none'; }}
           />
         </div>
 
-        {/* Quick stats row */}
-        <div className="gh-quick-stats">
-          <QuickStat label="Contributions" value="1,389+" />
-          <QuickStat label="Cur. Streak" value="4 days" />
+        {/* Quick streak row */}
+        <div className="gh-quick-stats" style={{ marginTop: 6 }}>
+          <QuickStat label="Total Contribs" value="1,389+" />
           <QuickStat label="Best Streak" value="37 days" />
         </div>
       </div>

@@ -78,7 +78,7 @@ export const LANG_COLORS = {
   Swift: '#F05138',
   Dart: '#00B4AB',
   Vue: '#41b883',
-  Jupyter Notebook: '#DA5B0B',
+  'Jupyter Notebook': '#DA5B0B',
 };
 
 export const USERNAME_GH = USERNAME;

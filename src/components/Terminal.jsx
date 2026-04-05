@@ -64,16 +64,20 @@ export default function Terminal() {
 
   // ─── Welcome message (only once) ───
   const showWelcome = useCallback(() => {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
     const welcomeLines = [
       { html: `<pre class="welcome-ascii">${WELCOME_ASCII}</pre>` },
+      { html: `<div class="welcome-tagline"><span class="wt-dot">◉</span> Full-Stack &amp; AI/ML Developer &nbsp;|&nbsp; Chatbot Expert &nbsp;|&nbsp; Hackathon Winner</div>` },
       { html: '' },
-      { html: `<span style="color:var(--accent-cyan);font-weight:700">Welcome to Krish Rathi's Terminal Portfolio</span>` },
-      { html: `<span style="color:var(--text-muted)">v2.0.0 — ${new Date().getFullYear()} Edition</span>` },
+      { html: `<div class="welcome-info-row"><span class="wi-key">os</span><span class="wi-sep">~</span><span class="wi-val">KrishOS v3.0 · React + Vite</span> &nbsp;&nbsp; <span class="wi-key">date</span><span class="wi-sep">~</span><span class="wi-val">${dateStr} ${timeStr}</span></div>` },
+      { html: `<div class="welcome-info-row"><span class="wi-key">uni</span><span class="wi-sep">~</span><span class="wi-val">BML Munjal University · B.Tech CS · 2023–2027</span></div>` },
+      { html: `<div class="welcome-info-row"><span class="wi-key">gh</span><span class="wi-sep">~</span><span class="wi-val"><a href="https://github.com/krishrathi1" target="_blank" style="color:var(--accent-cyan);text-decoration:none">github.com/krishrathi1</a> · 1,389+ contributions</span></div>` },
       { html: '' },
-      { html: `<span style="color:var(--text-secondary)">Type <span style="color:var(--accent-yellow);font-weight:600">help</span> to see available commands.</span>` },
-      { html: `<span style="color:var(--text-secondary)">Use <span style="color:var(--accent-yellow)">↑/↓</span> to navigate history. Press <span style="color:var(--accent-yellow)">Tab</span> to autocomplete.</span>` },
-      { html: `<span style="color:var(--text-muted);font-size:0.75rem">Try: about · skills --matrix · projects · sudo hire me · snake</span>` },
-      { html: '' }
+      { html: `<div class="welcome-cmd-hint"><span style="color:var(--text-muted)">Quick start →</span> <span class="wcmd">dashboard</span> <span class="wcmd">github</span> <span class="wcmd">repos</span> <span class="wcmd">timeline</span> <span class="wcmd">hack</span> <span class="wcmd">snake</span></div>` },
+      { html: `<div style="color:var(--text-muted);font-size:0.72rem;margin-top:2px">Type <span style="color:var(--accent-yellow)">help</span> for all commands · <span style="color:var(--accent-yellow)">Tab</span> autocomplete · <span style="color:var(--accent-yellow)">↑/↓</span> history</div>` },
+      { html: '' },
     ];
     setLines(prev => [...prev, ...welcomeLines.map(l => ({ ...l, id: lineIdRef.current++ }))]);
   }, []);
