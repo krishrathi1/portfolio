@@ -1,0 +1,16 @@
+﻿{
+  "name": "Krish Rathi Portfolio",
+  "short_name": "Krish Portfolio",
+  "description": "Official portfolio of Krish Rathi - AI/ML and Full-Stack Developer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0600",
+  "theme_color": "#0a0600",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

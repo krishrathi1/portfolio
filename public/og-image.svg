@@ -1,0 +1,14 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Krish Rathi Portfolio">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0600" />
+      <stop offset="100%" stop-color="#1f1200" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#ffb000" stroke-opacity="0.45" stroke-dasharray="8 8"/>
+  <text x="80" y="240" fill="#ffcc66" font-size="74" font-family="JetBrains Mono, monospace" font-weight="700">KRISH RATHI</text>
+  <text x="80" y="310" fill="#ffb000" font-size="36" font-family="JetBrains Mono, monospace">AI/ML and Full-Stack Developer</text>
+  <text x="80" y="380" fill="#f7c75a" font-size="30" font-family="JetBrains Mono, monospace">Projects | Skills | Hackathons | GitHub</text>
+  <text x="80" y="470" fill="#ffd78c" font-size="28" font-family="JetBrains Mono, monospace">krishrathi.dev</text>
+</svg>
