@@ -394,6 +394,7 @@ export default function Terminal() {
 
   return (
     <div className={`terminal-container fade-in ${glitching ? 'glitch-effect' : ''}`} onClick={handleContainerClick}>
+      <div className="scan-bar" />
       {/* Top Bar */}
       <div className="terminal-topbar">
         <div className="topbar-left">

@@ -24,9 +24,17 @@ export default function MatrixRain({ visible }) {
     window.addEventListener('resize', resize);
 
     function draw() {
-      ctx.fillStyle = 'rgba(10, 14, 20, 0.05)';
+      // Get current theme colors dynamically
+      const computed = getComputedStyle(document.body);
+      const bgColor = computed.getPropertyValue('--bg-primary').trim() || '#0a0600';
+      const textColor = computed.getPropertyValue('--accent-yellow').trim() || '#ffcc00';
+
+      ctx.fillStyle = bgColor;
+      ctx.globalAlpha = 0.05; // Fade effect instead of fixed rgba
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#7dcfff';
+      ctx.globalAlpha = 1.0;
+      
+      ctx.fillStyle = textColor;
       ctx.font = `${fontSize}px monospace`;
 
       const drops = dropsRef.current;

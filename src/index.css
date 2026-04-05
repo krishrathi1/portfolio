@@ -67,6 +67,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  /* Phosphor Bloom + Subtle Chromatic Aberration */
+  text-shadow: 
+    0.5px 0 1px rgba(255, 0, 0, 0.4),
+    -0.5px 0 1px rgba(0, 150, 255, 0.4),
+    0 0 5px rgba(255, 176, 0, 0.6);
+    
+  /* Authentic CRT softness */
+  filter: blur(0.3px);
 }
 
 #root {
